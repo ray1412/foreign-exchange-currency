@@ -1,3 +1,5 @@
 {
-  "general.submit": "submit"
+  "general.submit": "Submit",
+  "general.date": "Date",
+  "general.loading": "Loading..."
 }
