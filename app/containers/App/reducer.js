@@ -1,43 +1,58 @@
-/*
- * AppReducer
- *
- * The reducer takes care of our data. Using actions, we can change our
- * application state.
- * To add a new action, add it to the switch statement in the reducer function
- *
- * Example:
- * case YOUR_ACTION_CONSTANT:
- *   return state.set('yourStateVariable', true);
- */
-
 import { fromJS } from 'immutable';
-
-import { LOAD_REPOS_SUCCESS, LOAD_REPOS, LOAD_REPOS_ERROR } from './constants';
+import {
+  LOAD_EXCHANGE_RATE,
+  LOAD_EXCHANGE_RATE_ERROR,
+  LOAD_EXCHANGE_RATE_LOADED,
+} from './constants';
 
 // The initial state of the App
 const initialState = fromJS({
-  loading: false,
-  error: false,
-  currentUser: false,
-  userData: {
-    repositories: false,
+  exchangeRate: {
+    data: {},
+    loading: false,
+    loaded: false,
+    error: false,
   },
 });
 
 function appReducer(state = initialState, action) {
   switch (action.type) {
-    case LOAD_REPOS:
+    case LOAD_EXCHANGE_RATE:
       return state
-        .set('loading', true)
-        .set('error', false)
-        .setIn(['userData', 'repositories'], false);
-    case LOAD_REPOS_SUCCESS:
+        .setIn(['exchangeRate', 'loading'], true)
+        .setIn(['exchangeRate', 'loaded'], false)
+        .setIn(['exchangeRate', 'error'], false);
+    case LOAD_EXCHANGE_RATE_LOADED: {
+      let currencyList = [];
+      const { rates } = action.response;
+      if (rates) {
+        Object.keys(rates).map(item => {
+          currencyList = [
+            ...currencyList,
+            {
+              text: item,
+              value: item,
+            },
+          ];
+          return true;
+        });
+      }
+      const newResponse = {
+        ...action.response,
+        currencyList,
+      };
       return state
-        .setIn(['userData', 'repositories'], action.repos)
-        .set('loading', false)
-        .set('currentUser', action.username);
-    case LOAD_REPOS_ERROR:
-      return state.set('error', action.error).set('loading', false);
+        .setIn(['exchangeRate', 'data'], newResponse)
+        .setIn(['exchangeRate', 'loading'], false)
+        .setIn(['exchangeRate', 'loaded'], true)
+        .setIn(['exchangeRate', 'error'], false);
+    }
+
+    case LOAD_EXCHANGE_RATE_ERROR:
+      return state
+        .setIn(['exchangeRate', 'loaded'], false)
+        .setIn(['exchangeRate', 'loading'], false)
+        .setIn(['exchangeRate', 'error'], action.error);
     default:
       return state;
   }
