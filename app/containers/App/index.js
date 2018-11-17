@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, intlShape } from 'react-intl';
 import injectSaga from 'utils/injectSaga';
 import { createStructuredSelector } from 'reselect';
-import { Label, Input, Dropdown, Button } from 'semantic-ui-react';
+import { Icon, Label, Input, Dropdown, Button } from 'semantic-ui-react';
 import _debounce from 'lodash/debounce';
 import saga from './saga';
 import { loadExchangeRate } from './actions';
@@ -31,6 +31,13 @@ const AppWrapper = styled.div`
   @media (min-width: 768px) {
     width: 75%;
   }
+`;
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 10px 0;
 `;
 const DateLabel = styled(Label)`
   border: none !important;
@@ -122,14 +129,25 @@ class App extends React.Component {
     const { baseCurrency, value } = this.state;
     return (
       <AppWrapper>
-        <DateLabel float="right" basic>
-          {intl.formatMessage({ id: 'general.date' })}:{' '}
-          {exchangeRateData ? (
-            exchangeRateData.date
-          ) : (
-            <FormattedMessage id="general.loading" />
-          )}
-        </DateLabel>
+        <Header>
+          <DateLabel float="right" basic>
+            {intl.formatMessage({ id: 'general.date' })}:{' '}
+            {exchangeRateData ? (
+              exchangeRateData.date
+            ) : (
+              <FormattedMessage id="general.loading" />
+            )}
+          </DateLabel>
+          <Button
+            disabled={exchangeRateLoading}
+            circular
+            icon
+            size="tiny"
+            onClick={() => this.getExchangeRate()}
+          >
+            <Icon name="refresh" />
+          </Button>
+        </Header>
         <BaseCurrencyInput
           type="number"
           step="any"
