@@ -5,6 +5,8 @@ const GlobalStyle = createGlobalStyle`
   body {
     height: 100%;
     width: 100%;
+    -ms-overflow-style: none;  // IE 10+
+    overflow: -moz-scrollbars-none;  // Firefox
   }
 
   body {
@@ -26,6 +28,11 @@ const GlobalStyle = createGlobalStyle`
     font-family: Georgia, Times, 'Times New Roman', serif;
     line-height: 1.5em;
   }
+  
+  ::-webkit-scrollbar {
+    display: none; // chrome
+  }
+ 
 `;
 
 export default GlobalStyle;
