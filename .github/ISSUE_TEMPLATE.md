@@ -1,7 +1,7 @@
-# Wirecase Issue
+# Foreign Exchange Issue
 
 **Before opening a new issue, you may find an answer in already closed issues**:
-https://github.com/picolov/wirecase/issues?q=is%3Aissue+is%3Aclosed
+https://github.com/ray1412/foreign-exchange-currency/issues?q=is%3Aissue+is%3Aclosed
 
 ## Issue Type
 
@@ -18,7 +18,7 @@ https://github.com/picolov/wirecase/issues?q=is%3Aissue+is%3Aclosed
 
 # Versions
 
-- Wirecase:
+- foreign-exchange-currency:
 - Node/NPM:
 - Browser:
 - Operating System:
