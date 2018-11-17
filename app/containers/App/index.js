@@ -143,23 +143,19 @@ class App extends React.Component {
       item => item.currency === targetCurrency,
     );
     if (targetCurrency && !isCurrencyExist) {
-      this.setState(
-        {
-          displayedCurrency: [
-            ...displayedCurrency,
-            {
-              currency: targetCurrency,
-              rates: exchangeRateData.rates[targetCurrency],
-            },
-          ],
-        },
-        () => console.log(this.state.displayedCurrency),
-      );
+      this.setState({
+        displayedCurrency: [
+          ...displayedCurrency,
+          {
+            currency: targetCurrency,
+            rates: exchangeRateData.rates[targetCurrency],
+          },
+        ],
+      });
     }
   };
 
   updateDisplayedCurrency = () => {
-    console.log('kuy update');
     const { displayedCurrency } = this.state;
     const { exchangeRateData } = this.props;
     let newDisplayedCurrency = [];
