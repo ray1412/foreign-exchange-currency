@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, intlShape } from 'react-intl';
 import injectSaga from 'utils/injectSaga';
 import { createStructuredSelector } from 'reselect';
-import { Icon, Label, Input, Dropdown, Button } from 'semantic-ui-react';
 import _debounce from 'lodash/debounce';
+import { Icon, Label, Input, Dropdown, Button } from 'semantic-ui-react';
+import CurrencyPanel from 'components/CurrencyPanel';
 import saga from './saga';
 import { loadExchangeRate } from './actions';
 import {
@@ -17,12 +18,17 @@ import {
   makeSelectExchangeRateLoading,
 } from './selectors';
 /**
- * styling part
+ *  styling part
  */
 import GlobalStyle from '../../global-styles';
 
+/**
+ * component part
+ */
+
 const AppWrapper = styled.div`
   width: 100%;
+  height: 100%;
   margin: 0 auto;
   display: flex;
   min-height: 100%;
@@ -53,7 +59,14 @@ const BaseCurrencyInput = styled(Input)`
     background: transparent !important;
   }
 `;
-const DropdownWrapper = styled.div`
+const ContentWrapper = styled.div`
+  width: 100%;
+  max-height: 75vh;
+  overflow: scroll;
+  padding: 10px 10px 5px;
+  background: transparent;
+`;
+const SubmitCurrencyWrapper = styled.div`
   width: 100%;
   margin: 25px auto;
   display: flex;
@@ -75,7 +88,8 @@ class App extends React.Component {
     super();
     this.state = {
       baseCurrency: 'USD',
-      value: parseFloat(1.0),
+      baseNumber: parseFloat(1.0),
+      displayedCurrency: [],
     };
   }
 
@@ -83,26 +97,36 @@ class App extends React.Component {
     this.getExchangeRate();
   }
 
+  componentDidUpdate(prevProps) {
+    const { exchangeRateData } = this.props;
+    if (prevProps.exchangeRateData !== exchangeRateData) {
+      this.updateDisplayedCurrency();
+    }
+  }
+
   getExchangeRate() {
     const { baseCurrency } = this.state;
     this.props.loadExchangeRate({ base: baseCurrency });
   }
 
-  handleValueChanges = _debounce((e, data) => {
+  handleBaseNumberChanges = _debounce((e, data) => {
     const { value } = data;
     this.setState({
-      value: parseFloat(value),
+      baseNumber: parseFloat(value),
     });
   }, 25);
 
   handleBaseCurrencyChanges = (e, data) => {
     const { value } = data;
-    this.setState(
-      {
-        baseCurrency: value,
-      },
-      () => this.props.loadExchangeRate({ base: this.state.baseCurrency }),
-    );
+    const { baseCurrency } = this.state;
+    if (value !== baseCurrency) {
+      this.setState(
+        {
+          baseCurrency: value,
+        },
+        () => this.props.loadExchangeRate({ base: this.state.baseCurrency }),
+      );
+    }
   };
 
   handleTargetCurrencyChanges = (e, data) => {
@@ -114,9 +138,62 @@ class App extends React.Component {
 
   submitCurrency = () => {
     const { displayedCurrency, targetCurrency } = this.state;
-    this.setState({
-      displayedCurrency: [...displayedCurrency, targetCurrency],
-    });
+    const { exchangeRateData } = this.props;
+    const isCurrencyExist = displayedCurrency.find(
+      item => item.currency === targetCurrency,
+    );
+    if (targetCurrency && !isCurrencyExist) {
+      this.setState(
+        {
+          displayedCurrency: [
+            ...displayedCurrency,
+            {
+              currency: targetCurrency,
+              rates: exchangeRateData.rates[targetCurrency],
+            },
+          ],
+        },
+        () => console.log(this.state.displayedCurrency),
+      );
+    }
+  };
+
+  updateDisplayedCurrency = () => {
+    console.log('kuy update');
+    const { displayedCurrency } = this.state;
+    const { exchangeRateData } = this.props;
+    let newDisplayedCurrency = [];
+    if (displayedCurrency && displayedCurrency.length > 0) {
+      displayedCurrency.map(item => {
+        newDisplayedCurrency = [
+          ...newDisplayedCurrency,
+          {
+            currency: item.currency,
+            rates: exchangeRateData.rates[item.currency],
+          },
+        ];
+        return true;
+      });
+      this.setState({
+        displayedCurrency: newDisplayedCurrency,
+      });
+    }
+  };
+
+  generateContent = () => {
+    const { displayedCurrency, baseNumber, baseCurrency } = this.state;
+    let renderedItem = null;
+    if (displayedCurrency) {
+      renderedItem = displayedCurrency.map(item => (
+        <CurrencyPanel
+          key={item.currency}
+          item={item}
+          baseNumber={baseNumber}
+          baseCurrency={baseCurrency}
+        />
+      ));
+    }
+    return renderedItem;
   };
 
   render() {
@@ -126,7 +203,7 @@ class App extends React.Component {
       exchangeRateData,
       exchangeRateLoaded,
     } = this.props;
-    const { baseCurrency, value } = this.state;
+    const { baseCurrency, baseNumber } = this.state;
     return (
       <AppWrapper>
         <Header>
@@ -161,10 +238,11 @@ class App extends React.Component {
             />
           }
           actionPosition="left"
-          value={value}
-          onChange={this.handleValueChanges}
+          value={typeof baseNumber === 'number' ? baseNumber : ''}
+          onChange={this.handleBaseNumberChanges}
         />
-        <DropdownWrapper>
+        <ContentWrapper>{this.generateContent()}</ContentWrapper>
+        <SubmitCurrencyWrapper>
           <CustomDropdown
             search
             clearable
@@ -181,7 +259,7 @@ class App extends React.Component {
           >
             {intl.formatMessage({ id: 'general.submit' })}
           </CustomDropdownButton>
-        </DropdownWrapper>
+        </SubmitCurrencyWrapper>
         <GlobalStyle />
       </AppWrapper>
     );
