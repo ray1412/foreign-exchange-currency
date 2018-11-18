@@ -6,5 +6,5 @@ Hi, my name is `Raymond Haryanto`. This Project is created in order to answer th
 ## Goals
 Creating Foreign Exchange Currency App which using `https://exchangeratesapi.io/` as the API.
 
-## Themes
+## Support
 This Project is built using `react-boilerplate`, template --> https://github.com/react-boilerplate/react-boilerplate
