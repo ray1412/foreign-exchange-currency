@@ -34,18 +34,21 @@ import GlobalStyle from '../../global-styles';
  */
 
 const AppWrapper = styled.div`
+  position: fixed;
   width: 100%;
   height: 100%;
-  margin: 0 auto;
+  margin: 0;
   display: flex;
   min-height: 100%;
   padding: 0 16px;
   flex-direction: column;
   @media (min-width: 768px) {
     width: 75%;
+    margin: 0 12.5%;
   }
 `;
 const Header = styled.div`
+  position: sticky;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -58,6 +61,7 @@ const DateLabel = styled(Label)`
   text-align: right;
 `;
 const BaseCurrencyInput = styled(Input)`
+  position: sticky;
   border-bottom: 1px solid #000;
   padding: 0 0 5px;
   input {
@@ -74,6 +78,7 @@ const ContentWrapper = styled.div`
   background: transparent;
 `;
 const SubmitCurrencyWrapper = styled.div`
+  position: sticky;
   width: 100%;
   margin: 25px auto;
   display: flex;
@@ -98,6 +103,7 @@ class App extends React.Component {
       baseNumber: parseFloat(1.0),
       displayedCurrency: [],
     };
+    this.contentWrapperRef = React.createRef();
   }
 
   componentDidMount() {
@@ -150,15 +156,18 @@ class App extends React.Component {
       item => item.currency === targetCurrency,
     );
     if (targetCurrency && !isCurrencyExist) {
-      this.setState({
-        displayedCurrency: [
-          ...displayedCurrency,
-          {
-            currency: targetCurrency,
-            rates: exchangeRateData.rates[targetCurrency],
-          },
-        ],
-      });
+      this.setState(
+        {
+          displayedCurrency: [
+            ...displayedCurrency,
+            {
+              currency: targetCurrency,
+              rates: exchangeRateData.rates[targetCurrency],
+            },
+          ],
+        },
+        () => this.scrollDownContentWrapper(),
+      );
     }
   };
 
@@ -191,6 +200,10 @@ class App extends React.Component {
         displayedCurrency: newDisplayedCurrency,
       });
     }
+  };
+
+  scrollDownContentWrapper = () => {
+    this.contentWrapperRef.current.scrollTop = this.contentWrapperRef.current.scrollHeight;
   };
 
   generateContent = () => {
@@ -268,7 +281,9 @@ class App extends React.Component {
           value={typeof baseNumber === 'number' ? baseNumber : ''}
           onChange={this.handleBaseNumberChanges}
         />
-        <ContentWrapper>{this.generateContent()}</ContentWrapper>
+        <ContentWrapper ref={this.contentWrapperRef}>
+          {this.generateContent()}
+        </ContentWrapper>
         <SubmitCurrencyWrapper>
           <CustomDropdown
             search
