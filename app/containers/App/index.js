@@ -29,10 +29,6 @@ import {
  */
 import GlobalStyle from '../../global-styles';
 
-/**
- * component part
- */
-
 const AppWrapper = styled.div`
   position: fixed;
   width: 100%;
@@ -95,6 +91,7 @@ const CustomDropdownButton = styled(Button)`
     width: 15%;
   }
 `;
+
 class App extends React.Component {
   constructor() {
     super();
