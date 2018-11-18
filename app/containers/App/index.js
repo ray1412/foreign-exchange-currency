@@ -7,7 +7,14 @@ import { injectIntl, FormattedMessage, intlShape } from 'react-intl';
 import injectSaga from 'utils/injectSaga';
 import { createStructuredSelector } from 'reselect';
 import _debounce from 'lodash/debounce';
-import { Icon, Label, Input, Dropdown, Button } from 'semantic-ui-react';
+import {
+  Message,
+  Icon,
+  Label,
+  Input,
+  Dropdown,
+  Button,
+} from 'semantic-ui-react';
 import CurrencyPanel from 'components/CurrencyPanel';
 import saga from './saga';
 import { loadExchangeRate } from './actions';
@@ -63,7 +70,7 @@ const ContentWrapper = styled.div`
   width: 100%;
   max-height: 75vh;
   overflow: scroll;
-  padding: 10px 10px 5px;
+  padding: 10px 2vw 5px;
   background: transparent;
 `;
 const SubmitCurrencyWrapper = styled.div`
@@ -155,6 +162,16 @@ class App extends React.Component {
     }
   };
 
+  removeCurrency = targetCurrency => {
+    const { displayedCurrency } = this.state;
+    const newDisplayedCurrency = displayedCurrency.filter(
+      item => item.currency !== targetCurrency,
+    );
+    this.setState({
+      displayedCurrency: newDisplayedCurrency,
+    });
+  };
+
   updateDisplayedCurrency = () => {
     const { displayedCurrency } = this.state;
     const { exchangeRateData } = this.props;
@@ -177,17 +194,27 @@ class App extends React.Component {
   };
 
   generateContent = () => {
+    const { intl } = this.props;
     const { displayedCurrency, baseNumber, baseCurrency } = this.state;
     let renderedItem = null;
-    if (displayedCurrency) {
+    if (displayedCurrency && displayedCurrency.length > 0) {
       renderedItem = displayedCurrency.map(item => (
         <CurrencyPanel
           key={item.currency}
           item={item}
           baseNumber={baseNumber}
           baseCurrency={baseCurrency}
+          onRemoveCurrency={this.removeCurrency}
         />
       ));
+    } else {
+      renderedItem = (
+        <Message align="center" info>
+          <Message.Header>
+            {intl.formatMessage({ id: 'general.please.select.currency' })}
+          </Message.Header>
+        </Message>
+      );
     }
     return renderedItem;
   };
@@ -229,7 +256,11 @@ class App extends React.Component {
               scrolling
               loading={exchangeRateLoading}
               value={baseCurrency}
-              options={exchangeRateLoaded ? exchangeRateData.currencyList : []}
+              options={
+                exchangeRateLoaded && exchangeRateData
+                  ? exchangeRateData.currencyList
+                  : []
+              }
               onChange={this.handleBaseCurrencyChanges}
             />
           }
@@ -245,7 +276,16 @@ class App extends React.Component {
             scrolling
             selection={exchangeRateLoaded}
             loading={exchangeRateLoading}
-            options={exchangeRateLoaded ? exchangeRateData.currencyList : []}
+            placeholder={
+              exchangeRateLoaded && exchangeRateData
+                ? exchangeRateData.currencyList[0].value
+                : null
+            }
+            options={
+              exchangeRateLoaded && exchangeRateData
+                ? exchangeRateData.currencyList
+                : []
+            }
             onChange={this.handleTargetCurrencyChanges}
           />
           <CustomDropdownButton
@@ -284,9 +324,9 @@ const withSaga = injectSaga({ key: 'global', saga });
 App.propTypes = {
   exchangeRateData: PropTypes.object,
   exchangeRateLoading: PropTypes.bool,
+  exchangeRateLoaded: PropTypes.bool,
   intl: intlShape.isRequired,
   loadExchangeRate: PropTypes.func,
-  exchangeRateLoaded: PropTypes.bool,
 };
 export default compose(
   withConnect,

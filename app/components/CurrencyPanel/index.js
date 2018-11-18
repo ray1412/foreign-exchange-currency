@@ -1,16 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Card } from 'semantic-ui-react';
+import { Card, Button } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import CurrencyConstant from './currencyConstant';
 
-const Wrapper = styled(Card)`
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0 0 10px;
+`;
+const Container = styled(Card)`
   padding: 10px !important;
+  margin: 0 !important;
 `;
 const CalculationContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  span {
+    font-size: 1.1em;
+    font-weight: bold;
+  }
 `;
 const Segment = styled.div`
   margin: 10px 0 5px;
@@ -18,7 +29,19 @@ const Segment = styled.div`
 const CurrencyDescription = styled.span`
   font-style: italic;
   font-size: 0.9em;
-  font-weight: bold;
+`;
+const CustomSpan = styled.span`
+  background: #fe5722;
+  color: #ffffff;
+  padding: 5px;
+  font-size: 1em;
+  border-radius: 8px;
+`;
+const CloseButtonWrapper = styled.div`
+  margin: 0 1vw;
+  button {
+    margin: 0 !important;
+  }
 `;
 const defaultNumber = 1;
 class CurrencyPanel extends React.PureComponent {
@@ -35,27 +58,40 @@ class CurrencyPanel extends React.PureComponent {
   };
 
   render() {
-    const { item, baseCurrency } = this.props;
+    const { item, baseCurrency, onRemoveCurrency } = this.props;
     return (
-      <Wrapper fluid>
-        <CalculationContainer>
-          <span>{item.currency}</span>
-          <span>{this.calculateCurrency()}</span>
-        </CalculationContainer>
-        <Segment>
-          <CurrencyDescription>
-            {item.currency} - {CurrencyConstant[item.currency]}{' '}
-          </CurrencyDescription>
-        </Segment>
-        <Segment>
-          <span>
-            {defaultNumber}
-            &nbsp;
-            {baseCurrency} = {item.currency}
-            &nbsp;
-            {item.rates}
-          </span>
-        </Segment>
+      <Wrapper>
+        <Container fluid>
+          <div>
+            <CalculationContainer>
+              <span>{item.currency}</span>
+              <span>{this.calculateCurrency()}</span>
+            </CalculationContainer>
+            <Segment>
+              <CurrencyDescription>
+                {item.currency} - {CurrencyConstant[item.currency]}{' '}
+              </CurrencyDescription>
+            </Segment>
+            <Segment>
+              <CustomSpan>
+                {defaultNumber}
+                &nbsp;
+                {baseCurrency} = {item.currency}
+                &nbsp;
+                {item.rates}
+              </CustomSpan>
+            </Segment>
+          </div>
+        </Container>
+        <CloseButtonWrapper>
+          <Button
+            size="tiny"
+            color="red"
+            circular
+            icon="close"
+            onClick={() => onRemoveCurrency(item.currency)}
+          />
+        </CloseButtonWrapper>
       </Wrapper>
     );
   }
@@ -64,6 +100,7 @@ class CurrencyPanel extends React.PureComponent {
 CurrencyPanel.propTypes = {
   baseNumber: PropTypes.number,
   baseCurrency: PropTypes.string,
+  onRemoveCurrency: PropTypes.func,
   item: PropTypes.object,
 };
 
