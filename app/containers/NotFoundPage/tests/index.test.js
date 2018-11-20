@@ -13,12 +13,12 @@ describe('<NotFound />', () => {
     const renderedComponent = shallow(<NotFound />);
     expect(
       renderedComponent.contains(
-        <React.Fragment>
+        <h1>
           <FormattedMessage
             id="boilerplate.containers.NotFoundPage.header"
             defaultMessage="Page not found."
           />
-        </React.Fragment>,
+        </h1>,
       ),
     ).toEqual(true);
   });

@@ -11,9 +11,9 @@ import messages from './messages';
 export default function NotFound() {
   return (
     <article>
-      <React.Fragment>
+      <h1>
         <FormattedMessage {...messages.header} />
-      </React.Fragment>
+      </h1>
     </article>
   );
 }
