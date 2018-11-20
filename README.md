@@ -21,13 +21,13 @@ If there is something wrong with the deployment, I'd already serve it on --> htt
 ## Application Structure
 This application is running on app/app.js.
 
-` <Provider store={store}>
-      <LanguageProvider messages={messages}>
-        <ConnectedRouter history={history}>
-          <App />
-        </ConnectedRouter>
-      </LanguageProvider>
-    </Provider>
+` <Provider store={store}>&nbsp;
+      <LanguageProvider messages={messages}>&nbsp;
+        <ConnectedRouter history={history}>&nbsp;
+          <App />&nbsp;
+        </ConnectedRouter>&nbsp;
+      </LanguageProvider>&nbsp;
+    </Provider>&nbsp;
 `
 
 It will directly go to `<App/>`, which is located on `app/containers/App/index.js`.
