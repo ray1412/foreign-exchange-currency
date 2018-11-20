@@ -122,7 +122,7 @@ class App extends React.Component {
   handleBaseNumberChanges = _debounce((e, data) => {
     const { value } = data;
     this.setState({
-      baseNumber: parseFloat(value),
+      baseNumber: Math.abs(parseFloat(value)),
     });
   }, 25);
 
