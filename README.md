@@ -23,12 +23,12 @@ This application is running on app/app.js.
 
 ```
 <Provider store={store}>
-      <LanguageProvider messages={messages}>
-        <ConnectedRouter history={history}>
-          <App />
-        </ConnectedRouter>
-      </LanguageProvider>
-    </Provider>
+  <LanguageProvider messages={messages}>
+    <ConnectedRouter history={history}>
+      <App />
+    </ConnectedRouter>
+  </LanguageProvider>
+</Provider>
 ```
 
 It will directly go to `<App/>`, which is located on `app/containers/App/index.js`.
