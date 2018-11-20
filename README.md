@@ -11,7 +11,7 @@ This Project is built using `react-boilerplate`, template --> https://github.com
 
 ## Docker Support
 The Dockerfile will expose port `80`, so make sure run it `<expose IP>:80`
-If there is something wrong with the deployment, I'd already serve it on --> https://forex-ray.netlify.com
+In case, there is something wrong with the deployment, I'd already served it on --> https://forex-ray.netlify.com
 
 ## Local Build Instructions
 1. `git clone https://github.com/ray1412/foreign-exchange-currency`
