@@ -17,3 +17,22 @@ If there is something wrong with the deployment, I'd already serve it on --> htt
 1. `git clone https://github.com/ray1412/foreign-exchange-currency`
 2. `npm run install` or `yarn install`
 3. `npm run build`
+
+## Application Structure
+This application is running on app/app.js.
+
+` <Provider store={store}>
+      <LanguageProvider messages={messages}>
+        <ConnectedRouter history={history}>
+          <App />
+        </ConnectedRouter>
+      </LanguageProvider>
+    </Provider>
+`
+
+It will directly go to `<App/>`, which is located on `app/containers/App/index.js`.
+Below is the structure of the `<App/>` :
+- Header --> displaying date and refresh button
+- BaseCurrencyInput --> segment where user able to choose base currency and input the desired amount
+- Content --> where list of selected currency will be shown.
+- SubmitCurrency --> segment where user able to choose target currency (to be calculated)
